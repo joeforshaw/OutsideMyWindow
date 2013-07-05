@@ -102,10 +102,12 @@ layer.add(sun);
 layer.add(rightHill);
 layer.add(leftHill);
 layer.add(field);
-for (var i = 0; i < waves.length; i++) {
-  layer.add(waves[i]);
-}
 
+
+var windLayer = new Kinetic.Layer();
+for (var i = 0; i < waves.length; i++) {
+  windLayer.add(waves[i]);
+}
 
 
 
@@ -224,23 +226,25 @@ var firstRightTurbineBlade = new Kinetic.Polygon({
 var secondRightTurbineBlade = firstRightTurbineBlade.clone().rotate((2 * Math.PI) / 3);
 var thirdRightTurbineBlade = firstRightTurbineBlade.clone().rotate((4 * Math.PI) / 3);
 
-layer.add(leftTurbineBase);
-layer.add(firstLeftTurbineBlade);
-layer.add(secondLeftTurbineBlade);
-layer.add(thirdLeftTurbineBlade);
-layer.add(leftTurbineAxle);
+var turbineLayer = new Kinetic.Layer();
 
-layer.add(rightTurbineBase);
-layer.add(firstRightTurbineBlade);
-layer.add(secondRightTurbineBlade);
-layer.add(thirdRightTurbineBlade);
-layer.add(rightTurbineAxle);
+turbineLayer.add(leftTurbineBase);
+turbineLayer.add(firstLeftTurbineBlade);
+turbineLayer.add(secondLeftTurbineBlade);
+turbineLayer.add(thirdLeftTurbineBlade);
+turbineLayer.add(leftTurbineAxle);
 
-layer.add(middleTurbineBase);
-layer.add(firstMiddleTurbineBlade);
-layer.add(secondMiddleTurbineBlade);
-layer.add(thirdMiddleTurbineBlade);
-layer.add(middleTurbineAxle);
+turbineLayer.add(rightTurbineBase);
+turbineLayer.add(firstRightTurbineBlade);
+turbineLayer.add(secondRightTurbineBlade);
+turbineLayer.add(thirdRightTurbineBlade);
+turbineLayer.add(rightTurbineAxle);
+
+turbineLayer.add(middleTurbineBase);
+turbineLayer.add(firstMiddleTurbineBlade);
+turbineLayer.add(secondMiddleTurbineBlade);
+turbineLayer.add(thirdMiddleTurbineBlade);
+turbineLayer.add(middleTurbineAxle);
 
 
 
@@ -303,18 +307,32 @@ var thirdPylonOutline = thirdPylon.clone({
   strokeWidth: 11
 });
 
-layer.add(pylonOutline);
-layer.add(pylon);
-layer.add(secondPylonOutline);
-layer.add(secondPylon);
-layer.add(thirdPylonOutline);
-layer.add(thirdPylon);
+var pylonLayer = new Kinetic.Layer();
+
+pylonLayer.add(pylonOutline);
+pylonLayer.add(pylon);
+pylonLayer.add(secondPylonOutline);
+pylonLayer.add(secondPylon);
+pylonLayer.add(thirdPylonOutline);
+pylonLayer.add(thirdPylon);
 
 // Add the layer to the stage
 stage.add(layer);
+stage.add(windLayer);
+stage.add(turbineLayer);
+stage.add(pylonLayer);
 
 
+var wind = new Kinetic.Animation(function(frame) {
+  for (var i = 0; i < waves.length; i++) {
+    waves[i].move(-1, 0);
+    if (waves[i].getX() < -400) {
+      waves[i].move(1600, 0);
+    }
+  };
+}, windLayer);
 
+wind.start();
 
 
 // Wind Turbine Animations
@@ -332,17 +350,7 @@ var rotation = new Kinetic.Animation(function(frame) {
   firstRightTurbineBlade.rotate(angleDiff);
   secondRightTurbineBlade.rotate(angleDiff);
   thirdRightTurbineBlade.rotate(angleDiff);
-}, layer);
+}, turbineLayer);
 
 rotation.start();
 
-var wind = new Kinetic.Animation(function(frame) {
-  for (var i = 0; i < waves.length; i++) {
-    waves[i].move(-1, 0);
-    if (waves[i].getX() < -400) {
-      waves[i].move(1600, 0);
-    }
-  }
-}, layer);
-
-wind.start();
